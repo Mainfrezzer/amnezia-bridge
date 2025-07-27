@@ -1,4 +1,4 @@
-# WireGuard Bridge
+# Amnezia Bridge / Amnezia Server
 
 ## Quick Start
 
