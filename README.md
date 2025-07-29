@@ -1,4 +1,4 @@
-# Amnezia Bridge / Amnezia Server
+# Amnezia Bridge
 
 ## Quick Start
 
