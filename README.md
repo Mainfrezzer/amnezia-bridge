@@ -12,6 +12,7 @@ The template can be downloaded here
 <pre>
 docker run --name amnezia-bridge \
     --restart unless-stopped \
+    --device=/dev/net/tun \
     -v /my/own/dir:/etc/amnezia/amneziawg/ \
     -p 1080:1080/tcp `#Socks5` \
     -p 8080:8080/tcp `#Privoxy` \
