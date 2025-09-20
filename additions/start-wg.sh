@@ -22,6 +22,13 @@ IP4GATEWAY=$(ip route | awk '/default/ { print $3 }')
 IP6GATEWAY=$(ip -6 route | awk '/default/ { print $3 }')
 
 
+iptables -I OUTPUT -d 192.168.0.0/16 -j ACCEPT
+iptables -I OUTPUT -d 172.16.0.0/12 -j ACCEPT
+iptables -I OUTPUT -d 10.0.0.0/8 -j ACCEPT
+ip6tables -I OUTPUT -d fc00::/7 -j ACCEPT
+
+
+
 if [ -z ${DISABLE_TUNNEL_MODE} ]; then
     if ! grep -q "::/0" /etc/amnezia/amneziawg/wg0.conf; then
 	ip -6 route flush default
@@ -42,6 +49,11 @@ if [ ${EXIT_STATUS} != 0 ]; then
   echo "---Can't start Amnezia tunnel, please check your config!---"
 else
   echo "---Amnezia tunnel started successfully...---"
+    if [ -z ${DISABLE_TUNNEL_MODE} ]; then
+    FWMARK=$(awg show wg0 fwmark)
+    iptables -A OUTPUT ! -o wg0 -m mark ! --mark "$FWMARK" -m addrtype ! --dst-type LOCAL -j REJECT
+    ip6tables -A OUTPUT ! -o wg0 -m mark ! --mark "$FWMARK" -m addrtype ! --dst-type LOCAL -j REJECT
+    fi
     PUBLIC_IP4=$(wget -qO- -T 3 ipv4.icanhazip.com > /dev/null 2>&1)
     if [ $? -eq 0 ]; then
         echo "Public IPv4: $(wget -qO- -T 3 ipv4.icanhazip.com)"
@@ -71,14 +83,4 @@ else
   privoxy /etc/privoxy/config
 fi
 
-while true
-do
-status=$(awg)
-if [[ -z "$status" ]]; then
-   kill -15 1 > /dev/null 2>&1
-   sleep infinity
-   break
-else
-   sleep 1
-fi
-done
+tail -f /dev/null

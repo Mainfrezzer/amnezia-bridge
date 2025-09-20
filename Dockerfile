@@ -17,7 +17,6 @@ RUN git clone https://github.com/amnezia-vpn/amneziawg-go
 WORKDIR /src/amneziawg-go
 RUN go build -o /amneziawg .
 
-
 FROM golang:alpine AS tools
 RUN apk update && apk add --no-cache git make bash build-base linux-headers
 RUN git clone https://github.com/amnezia-vpn/amneziawg-tools.git
@@ -37,5 +36,5 @@ RUN sed -i 's|\[\[ $proto == -4 \]\] && cmd sysctl -q net\.ipv4\.conf\.all\.src_
 
 COPY /additions /
 COPY --from=builder /build/microsocks .
-
+HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 CMD /bin/sh /healthcheck.sh
 ENTRYPOINT ["/start.sh"]
