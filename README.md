@@ -22,8 +22,10 @@ docker run --name amnezia-bridge \
     -e HTTPPORT=8118 `#Privoxy Port, default is 8080` \
     -e CONNECTED_CONTAINERS= `#Optional feature of ich777 container` \
     -e ENABLE_RANDOM=0 `#Enables Random mode for the server chosen, picks a file from /etc/amnezia/amneziawg at random` \
+    -e HEALTH_URL_CHECK= `#Custom URL or IP to ping for the healthcheck`\
     -e DISABLE_TUNNEL_MODE= `#Setting ANY value will disable the VPN tunnel enforcement.*` \
     -d ghcr.io/mainfrezzer/amnezia-bridge
 </pre>
 
 '*' That means the container will not ensure that all your traffic is routed through the VPN. This is useful if you want your containers only to reach specific VPN IPs but otherwise want to use your internet connection
+
