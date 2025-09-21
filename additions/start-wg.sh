@@ -83,4 +83,4 @@ else
   privoxy /etc/privoxy/config
 fi
 
-tail -f /dev/null
+sleep infinity
