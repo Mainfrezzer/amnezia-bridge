@@ -10,7 +10,7 @@ RUN apk add --update --no-cache \
       make && \
       cp ./microsocks ..
 
-FROM golang:1.24-alpine AS builder2
+FROM golang:1.25.1-alpine AS builder2
 RUN apk add --no-cache git
 WORKDIR /src
 RUN git clone https://github.com/amnezia-vpn/amneziawg-go
