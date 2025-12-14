@@ -1,4 +1,4 @@
-FROM alpine:latest AS builder
+FROM alpine:3.22 AS builder
 ARG MICROSOCKS_TAG=v1.0.5
 ENV MICROSOCKS_URL="https://github.com/rofl0r/microsocks/archive/refs/tags/$MICROSOCKS_TAG.zip"
 WORKDIR /build
@@ -23,7 +23,7 @@ RUN git clone https://github.com/amnezia-vpn/amneziawg-tools.git
 RUN cd amneziawg-tools/src && \
     make
 
-FROM alpine:latest
+FROM alpine:3.22
 ENV HTTPPORT=8080
 ENV CONNECTED_CONTAINERS=""
 RUN apk add --no-cache iptables ip6tables wireguard-tools-wg-quick privoxy socat
