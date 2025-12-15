@@ -47,6 +47,7 @@ EXIT_STATUS=$?
 
 if [ ${EXIT_STATUS} != 0 ]; then
   echo "---Can't start Amnezia tunnel, please check your config!---"
+  kill -15 1 > /dev/null 2>&1
 else
   echo "---Amnezia tunnel started successfully...---"
     if [ -z ${DISABLE_TUNNEL_MODE} ]; then
