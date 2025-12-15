@@ -1,4 +1,4 @@
-FROM alpine:3.22 AS builder
+FROM alpine:latest AS builder
 ARG MICROSOCKS_TAG=v1.0.5
 ENV MICROSOCKS_URL="https://github.com/rofl0r/microsocks/archive/refs/tags/$MICROSOCKS_TAG.zip"
 WORKDIR /build
@@ -10,7 +10,15 @@ RUN apk add --update --no-cache \
       make && \
       cp ./microsocks ..
 
-FROM golang:1.25.1-alpine AS builder2
+#Workaround for openresolv issue
+FROM alpine:latest AS openresolv
+RUN apk --no-cache add alpine-sdk coreutils cmake sudo bash git
+COPY /build /tmp/openresolv/
+WORKDIR /tmp/openresolv/
+RUN mkdir -p /tmp/tmp/ && abuild-keygen -a -i -n && abuild -F checksum && abuild -F -r && find /root/packages/ -name "*.apk" -exec cp {} /tmp/tmp \;
+
+
+FROM golang:alpine AS builder2
 RUN apk add --no-cache git
 WORKDIR /src
 RUN git clone https://github.com/amnezia-vpn/amneziawg-go
@@ -23,7 +31,7 @@ RUN git clone https://github.com/amnezia-vpn/amneziawg-tools.git
 RUN cd amneziawg-tools/src && \
     make
 
-FROM alpine:3.22
+FROM alpine:latest
 ENV HTTPPORT=8080
 ENV CONNECTED_CONTAINERS=""
 RUN apk add --no-cache iptables ip6tables wireguard-tools-wg-quick privoxy socat
@@ -36,5 +44,11 @@ RUN sed -i 's|\[\[ $proto == -4 \]\] && cmd sysctl -q net\.ipv4\.conf\.all\.src_
 
 COPY /additions /
 COPY --from=builder /build/microsocks .
+
+#Workaround for openresolv
+COPY --from=openresolv /tmp/tmp/ .
+RUN apk add --allow-untrusted /openresolv-3.17.3-r0.apk
+RUN rm /*.apk
+
 HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 CMD /bin/sh /healthcheck.sh
 ENTRYPOINT ["/start.sh"]
