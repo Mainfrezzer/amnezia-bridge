@@ -1,5 +1,10 @@
 # Amnezia Bridge
 
+## Small Note ##
+Ive discovered something rather funky with amnezia, im not sure if wireguard has the same "issue"
+If you declare a ipv4 address as endpoint in the config, local v6 connections via lan will fail.
+That will not happen if your amnezia config uses a domain name, which might resolve to a ipv4 or you use a ipv6 address. Not sure why it happens yet but i noticed it while i swapped some configs around
+
 ## Quick Start
 
 ### Unraid
@@ -55,6 +60,7 @@ docker run --name amnezia-bridge \
 </pre>
 
 '*' That means the container will not ensure that all your traffic is routed through the VPN. This is useful if you want your containers only to reach specific VPN IPs but otherwise want to use your internet connection
+
 
 
 
