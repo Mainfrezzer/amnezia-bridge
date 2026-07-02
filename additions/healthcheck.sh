@@ -22,7 +22,7 @@ HOST=$(traceroute -m 1 -w 1 -n -i wg0 "$PEER" | awk 'NR==2 {print $2}')
 fi
 fi
 
-ping -I wg0 -c 1 -W 20 "$HOST" > /dev/null 2>&1
+timeout 20 ping -I wg0 -c 1 -W 20 "$HOST" > /dev/null 2>&1
 if [ $? -eq 0 ]; then
     if [ "$(cat "$HEALTHCHECK_FILE")" != "0" ]; then
       echo "0" > "$HEALTHCHECK_FILE"
